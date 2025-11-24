@@ -1,9 +1,10 @@
 ﻿namespace ProjectManagementSystem.Services;
-
+using ProjectManagementSystem.Models;
+using ProjectManagementSystem.Enums;
 public interface ITaskService
 {
-    Task CreateTask(string title, string description, DateTime deadline, TaskStatus status, int assignedTo, int assignedBy);
-    Task? GetTaskById(int id);
-    List<Task> GetAllTasks();
+    ProjectTask CreateTask(string title, string description, DateTime deadline, int assignedTo, int assignedBy);
+    ProjectTask? GetTaskById(int id);
+    List<ProjectTask> GetAllTasks();
     void DeleteTask(int id);
 }
