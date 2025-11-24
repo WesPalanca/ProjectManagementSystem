@@ -1,8 +1,8 @@
 ﻿namespace ProjectManagementSystem.Enums;
 
-public enum TaskStatus
+public enum ProjectTaskStatus
 {
-    NotStarted,
+    Unassigned,
     InProgress,
     Complete,
     Reported
