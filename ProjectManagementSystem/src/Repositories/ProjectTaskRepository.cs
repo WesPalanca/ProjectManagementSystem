@@ -5,20 +5,41 @@ using ProjectManagementSystem.Enums;
 namespace ProjectManagementSystem.Repositories;
 using ProjectManagementSystem.Models;
 
-public class ProjectTaskRepository : ITaskRepository
+public class ProjectTaskRepository : IProjectTaskRepository
 {
     // todo: in memory dictionary
-    // private Dictionary<int, Task> tasks;
+    private Dictionary<int, ProjectTask> _tasks = new Dictionary<int, ProjectTask>();
     private readonly MySqlConnection _connection;
-    private readonly ITaskFactory _taskFactory;
+    private readonly IProjectTaskFactory _projectTaskFactory;
 
-    public ProjectTaskRepository(MySqlConnection connection, ITaskFactory taskFactory)
+    public ProjectTaskRepository(MySqlConnection connection, IProjectTaskFactory projectTaskFactory)
     {
         _connection = connection;
-        _taskFactory = taskFactory;
+        _projectTaskFactory = projectTaskFactory;
+        PopulateTasks();
     }
 
-    public void Add(ProjectTask projectTask)
+    private void PopulateTasks()
+    {
+        string query = "SELECT * FROM Tasks;";
+        using MySqlCommand cmd = new MySqlCommand(query, _connection);
+        using MySqlDataReader reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            ProjectTask? task = _projectTaskFactory.CreateTask(
+                reader.GetString("Title"),
+                reader.GetString("Description"),
+                reader.GetInt32("AssignedBy"),
+                reader.GetInt32("AssignedTo"),
+                reader.GetDateTime("deadline"),
+                reader.GetString("TaskType"));
+            task.TaskId = reader.GetInt32("TaskId");
+            _tasks[task.TaskId] = task;
+        }
+    }
+
+
+public void Add(ProjectTask projectTask)
     {
         string query = @"
             INSERT INTO Tasks (Title, Description, AssignedBy, AssignedTo, Status, Deadline, TaskType)
@@ -35,128 +56,52 @@ public class ProjectTaskRepository : ITaskRepository
 
         cmd.ExecuteNonQuery();
         projectTask.TaskId = (int)cmd.LastInsertedId;
+        _tasks[projectTask.TaskId] = projectTask;
     }
 
     public ProjectTask? GetById(int id)
     {
-        string query = @"SELECT * FROM Tasks WHERE TaskId = @id LIMIT 1";
-
-        using MySqlCommand cmd = new MySqlCommand(query, _connection);
-        cmd.Parameters.AddWithValue("@id", id);
-
-        using MySqlDataReader reader = cmd.ExecuteReader();
-        if (!reader.Read()) return null;
-
-        // Use TaskFactory to create the correct type
-        ProjectTask? task = _taskFactory.CreateTask(
-            reader.GetString("Title"),
-            reader.GetString("Description"),
-            reader.GetInt32("AssignedBy"),
-            reader.GetInt32("AssignedTo"),
-            reader.GetDateTime("Deadline"),
-            reader.GetString("TaskType")
-        );
-
-        if (task != null)
+        if (_tasks.ContainsKey(id))
         {
-            task.TaskId = reader.GetInt32("TaskId");
-            task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
+            return _tasks[id];
         }
 
-        return task;
+        return null;
+       
     }
 
     public List<ProjectTask> GetAll()
     {
-        string query = "SELECT * FROM Tasks";
-        using MySqlCommand cmd = new MySqlCommand(query, _connection);
-        using MySqlDataReader reader = cmd.ExecuteReader();
-
-        List<ProjectTask> tasks = new List<ProjectTask>();
-        while (reader.Read())
-        {
-            ProjectTask? task = _taskFactory.CreateTask(
-                reader.GetString("Title"),
-                reader.GetString("Description"),
-                reader.GetInt32("AssignedBy"),
-                reader.GetInt32("AssignedTo"),
-                reader.GetDateTime("Deadline"),
-                reader.GetString("TaskType")
-            );
-
-            if (task != null)
-            {
-                task.TaskId = reader.GetInt32("TaskId");
-                task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
-            }
-
-            if (task != null)
-                tasks.Add(task);
-        }
-
-        return tasks;
+        return _tasks.Values.ToList();
+      
     }
 
     public List<ProjectTask> GetByAssignedTo(int userId)
     {
-        string query = "SELECT * FROM Tasks WHERE AssignedTo = @userId";
-        using MySqlCommand cmd = new MySqlCommand(query, _connection);
-        cmd.Parameters.AddWithValue("@userId", userId);
-
-        using MySqlDataReader reader = cmd.ExecuteReader();
-        List<ProjectTask> tasks = new List<ProjectTask>();
-
-        while (reader.Read())
+        List<ProjectTask> projectTasks = new List<ProjectTask>();
+        foreach (ProjectTask task in _tasks.Values)
         {
-            ProjectTask? task = _taskFactory.CreateTask(
-                reader.GetString("Title"),
-                reader.GetString("Description"),
-                reader.GetInt32("AssignedBy"),
-                reader.GetInt32("AssignedTo"),
-                reader.GetDateTime("Deadline"),
-                reader.GetString("TaskType")
-            );
-
-            if (task != null)
+            if (task.AssignedBy == userId)
             {
-                task.TaskId = reader.GetInt32("TaskId");
-                task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
-                tasks.Add(task);
+                projectTasks.Add(task);
             }
         }
-
-        return tasks;
+        return projectTasks;
+       
     }
 
     public List<ProjectTask> GetByAssignedBy(int userId)
     {
-        string query = "SELECT * FROM Tasks WHERE AssignedBy = @userId";
-        using MySqlCommand cmd = new MySqlCommand(query, _connection);
-        cmd.Parameters.AddWithValue("@userId", userId);
-
-        using MySqlDataReader reader = cmd.ExecuteReader();
-        List<ProjectTask> tasks = new List<ProjectTask>();
-
-        while (reader.Read())
+        List<ProjectTask> projectTasks = new List<ProjectTask>();
+        foreach (ProjectTask task in _tasks.Values)
         {
-            ProjectTask? task = _taskFactory.CreateTask(
-                reader.GetString("Title"),
-                reader.GetString("Description"),
-                reader.GetInt32("AssignedBy"),
-                reader.GetInt32("AssignedTo"),
-                reader.GetDateTime("Deadline"),
-                reader.GetString("TaskType")
-            );
-
-            if (task != null)
+            if (task.AssignedTo == userId)
             {
-                task.TaskId = reader.GetInt32("TaskId");
-                task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
-                tasks.Add(task);
+                projectTasks.Add(task);
             }
         }
+        return projectTasks;
 
-        return tasks;
     }
 
     public void Delete(int id)
@@ -165,5 +110,6 @@ public class ProjectTaskRepository : ITaskRepository
         using MySqlCommand cmd = new MySqlCommand(query, _connection);
         cmd.Parameters.AddWithValue("@id", id);
         cmd.ExecuteNonQuery();
+        _tasks.Remove(id);
     }
 }
