@@ -9,19 +9,21 @@ class Program
 {
     static void Main(string[] args)
     {
+        System sys = new System();
+        
+        sys.Run();
         try
         {
             string projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
             Env.Load(Path.Combine(projectRoot, ".env"));
-            string secret = Environment.GetEnvironmentVariable("SECRET");
-            Console.WriteLine($"SECRET = {secret}");
+
             
-            var db = Database.GetInstance();
+            Database db = Database.GetInstance();
 
             
             string query = "SELECT * FROM Users;";
-            using var cmd = new MySqlCommand(query, db.Connection);
-            using var reader = cmd.ExecuteReader();
+            using MySqlCommand cmd = new MySqlCommand(query, db.Connection);
+            using MySqlDataReader reader = cmd.ExecuteReader();
 
             Console.WriteLine("Users in the database:");
             while (reader.Read())

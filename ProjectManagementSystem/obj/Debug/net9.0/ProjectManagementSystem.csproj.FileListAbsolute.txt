@@ -39,3 +39,4 @@ C:\Users\wespl\RiderProjects\ProjectManagementSystem\ProjectManagementSystem\bin
 C:\Users\wespl\RiderProjects\ProjectManagementSystem\ProjectManagementSystem\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
 C:\Users\wespl\RiderProjects\ProjectManagementSystem\ProjectManagementSystem\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
 C:\Users\wespl\RiderProjects\ProjectManagementSystem\ProjectManagementSystem\bin\Debug\net9.0\Sprache.dll
+C:\Users\wespl\RiderProjects\ProjectManagementSystem\ProjectManagementSystem\obj\Debug\net9.0\ProjectManagementSystem.sourcelink.json
