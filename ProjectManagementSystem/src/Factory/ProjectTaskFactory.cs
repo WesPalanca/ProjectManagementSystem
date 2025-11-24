@@ -1,6 +1,6 @@
 ﻿namespace ProjectManagementSystem.Factory;
 using ProjectManagementSystem.Models;
-public class TaskFactory
+public class ProjectTaskFactory : IProjectTaskFactory
 {
     public ProjectTask? CreateTask(string title, string description, int assignedBy, int assignedTo, DateTime deadline,
         string taskType)
