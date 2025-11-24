@@ -17,7 +17,7 @@ public class UserService : IUserService
     public User CreateUser(string firstname, string lastname, string email, string password, string role)
     {
         // Only create the User object via the factory
-        User createdUser = _userFactory.CreateUser(firstname, lastname, email, password, role);
+        User? createdUser = _userFactory.CreateUser(firstname, lastname, email, password, role);
 
         // Persist user to the database (password sent separately)
         _userRepository.Add(createdUser, password);
