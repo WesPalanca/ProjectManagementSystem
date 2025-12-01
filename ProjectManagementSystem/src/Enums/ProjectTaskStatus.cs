@@ -3,7 +3,9 @@
 public enum ProjectTaskStatus
 {
     Unassigned,
+    Assigned,
     InProgress,
     Complete,
-    Reported
+    Reported,
+    Approved
 }
