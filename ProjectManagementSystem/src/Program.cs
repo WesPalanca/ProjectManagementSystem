@@ -1,6 +1,10 @@
 ﻿using MySql.Data.MySqlClient;
 using ProjectManagementSystem.Services;
 using DotNetEnv;
+using ProjectManagementSystem.Factory;
+using ProjectManagementSystem.Repositories;
+using ProjectManagementSystem.Strategies;
+
 namespace ProjectManagementSystem;
 
 
@@ -9,34 +13,18 @@ class Program
 {
     static void Main(string[] args)
     {
-        try
-        {
-            string projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
-            Env.Load(Path.Combine(projectRoot, ".env"));
-            string secret = Environment.GetEnvironmentVariable("SECRET");
-            Console.WriteLine($"SECRET = {secret}");
-            
-            var db = Database.GetInstance();
-
-            
-            string query = "SELECT * FROM Users;";
-            using var cmd = new MySqlCommand(query, db.Connection);
-            using var reader = cmd.ExecuteReader();
-
-            Console.WriteLine("Users in the database:");
-            while (reader.Read())
-            {
-                Console.WriteLine($"ID: {reader["UserId"]}, Name: {reader["FirstName"]} {reader["LastName"]}, Email: {reader["Email"]}");
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error: " + e.Message);
-        }
-        finally
-        {
-            Console.WriteLine("Test complete.");
-        }
+        MySqlConnection connection = Database.GetInstance().Connection;
+        IUserFactory userFactory = new UserFactory();
+        IUserRepository userRepository = new UserRepository(connection, userFactory);
+        IUserService userService = new UserService(userFactory, userRepository);
+        IProjectTaskFactory projectTaskFactory = new ProjectTaskFactory();
+        IProjectTaskRepository projectTaskRepository = new ProjectTaskRepository(connection, projectTaskFactory);
+        IProjectTaskService projectTaskService = new ProjectTaskService(projectTaskFactory, projectTaskRepository);
+        TaskStatusProcessor taskStatusProcessor = new TaskStatusProcessor();
+        TaskDisplayer taskDisplayer = new TaskDisplayer(userService);
+        System sys = new System(userService, projectTaskService, taskStatusProcessor, taskDisplayer);
+        sys.Run();
+       
         
     }
 }
