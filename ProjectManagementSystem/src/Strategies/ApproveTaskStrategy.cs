@@ -3,11 +3,11 @@ using ProjectManagementSystem.Models;
 
 namespace ProjectManagementSystem.Strategies;
 
-public class RequestRevisionStrategy : ITaskStatusStrategy
+public class ApproveTaskStrategy : ITaskStatusStrategy
 {
     public void Handle(ProjectTask task)
     {
-        task.Status = ProjectTaskStatus.Reported;
-        Console.WriteLine("Task has been reported");
+        task.Status = ProjectTaskStatus.Approved;
+        Console.WriteLine("Task has been approved");
     }
 }
