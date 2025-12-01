@@ -1,4 +1,5 @@
-﻿using ProjectManagementSystem.Models;
+﻿using ProjectManagementSystem.Enums;
+using ProjectManagementSystem.Models;
 
 using ProjectManagementSystem.Services;
 using ProjectManagementSystem.Strategies;
@@ -137,7 +138,8 @@ public class System
             Console.WriteLine("6. Create Task");
             Console.WriteLine("7. Assign Task");
             Console.WriteLine("8. Remove Task");
-            Console.WriteLine("9. Exit");
+            Console.WriteLine("9. Your Reported Tasks");
+            Console.WriteLine("10. Exit");
             Console.Write("option: ");
             string? option = Console.ReadLine();
 
@@ -168,6 +170,9 @@ public class System
                     RemoveTask();
                     break;
                 case "9":
+                    ViewUserReportedTasks();
+                    break;
+                case "10":
                     _activeUser = null;
                     break;
                 default:
@@ -185,6 +190,18 @@ public class System
         foreach (ProjectTask task in incompleteTasks)
         {
             _taskDisplayer.Display(task);
+        }
+    }
+
+    private void ViewUserReportedTasks()
+    {
+        Console.WriteLine("------------Your reported tasks------------");
+        foreach (ProjectTask task in _projectTaskService.GetAllTasks())
+        {
+            if (task.Status == ProjectTaskStatus.Reported && task.AssignedBy == _activeUser.UserId)
+            {
+                _taskDisplayer.Display(task);
+            }
         }
     }
 
