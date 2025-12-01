@@ -1,4 +1,5 @@
 ﻿namespace ProjectManagementSystem.Models;
+
 using ProjectManagementSystem.Enums;
 
 public abstract class ProjectTask
