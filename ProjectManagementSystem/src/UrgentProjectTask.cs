@@ -10,6 +10,5 @@ public class UrgentProjectTask : ProjectTask
         DateTime deadline
     ) : base(title, description, assignedBy, assignedTo, deadline, "Urgent")
     {
-        // SummaryStrategy = new UrgentSummaryStrategy();
     }
 }
