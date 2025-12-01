@@ -8,4 +8,5 @@ public interface IProjectTaskRepository
     List<ProjectTask> GetByAssignedTo(int userId);
     List<ProjectTask> GetByAssignedBy(int userId);
     void Delete(int id);
+    void Update(ProjectTask task);
 }
