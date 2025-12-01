@@ -1,8 +1,7 @@
-﻿using MySql.Data.MySqlClient;
-using ProjectManagementSystem.Factory;
-using ProjectManagementSystem.Models;
-using ProjectManagementSystem.Repositories;
+﻿using ProjectManagementSystem.Models;
+
 using ProjectManagementSystem.Services;
+using ProjectManagementSystem.Strategies;
 
 namespace ProjectManagementSystem;
 
@@ -10,22 +9,15 @@ public class System
 {
     private User? _activeUser;
     private readonly IUserService _userService;
-    // todo: taskService
     private readonly IProjectTaskService _projectTaskService;
-    public System()
+    private readonly TaskDisplayer _taskDisplayer;
+    private readonly TaskStatusProcessor _taskStatusProcessor;
+    public System(IUserService userService, IProjectTaskService projectTaskService, TaskStatusProcessor taskStatusProcessor, TaskDisplayer taskDisplayer)
     {
-        MySqlConnection connection = Database.GetInstance().Connection;
-        IUserFactory userFactory = new UserFactory();
-        IUserRepository userRepository = new UserRepository(connection);
-        _userService = new UserService(userFactory, userRepository);
-        // todo: taskService, taskFactory, taskRepository
-        IProjectTaskFactory projectTaskFactory = new ProjectTaskFactory();
-        IProjectTaskRepository projectTaskRepository = new ProjectTaskRepository(connection, projectTaskFactory);
-        _projectTaskService = new ProjectTaskService(projectTaskFactory, projectTaskRepository);
-        
-
-
-
+        _userService = userService;
+        _projectTaskService = projectTaskService;
+        _taskDisplayer = taskDisplayer;
+        _taskStatusProcessor = taskStatusProcessor;
     }
 
     public void Run()
@@ -137,52 +129,101 @@ public class System
         {
             
             Console.WriteLine("-------Project Manager Menu-------");
-            Console.WriteLine("1. View All Tasks");
-            Console.WriteLine("2. View All Users");
-            Console.WriteLine("3. Create Task");
-            Console.WriteLine("4. Assign Task");
-            Console.WriteLine("5. Remove Task");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("1. View Current Tasks");
+            Console.WriteLine("2. View Completed Tasks");
+            Console.WriteLine("3. View All Users");
+            Console.WriteLine("4. View Created Tasks");
+            Console.WriteLine("5. Approve/Review Task");
+            Console.WriteLine("6. Create Task");
+            Console.WriteLine("7. Assign Task");
+            Console.WriteLine("8. Remove Task");
+            Console.WriteLine("9. Exit");
             Console.Write("option: ");
             string? option = Console.ReadLine();
 
             switch (option)
             {
                 case "1":
-                    ViewAllTasks();
+                    ViewCurrentTasks();
                     break;
                 case "2":
-                    ViewAllUsers();
+                    ViewCompleteTasks();
                     break;
                 case "3":
-                    CreateTask();
+                    ViewAllUsers();
                     break;
                 case "4":
-                    AssignTask();
+                    ViewCreatedTasks();
                     break;
                 case "5":
-                    RemoveTask();
+                    ReviewCompletedTask();
                     break;
                 case "6":
+                    CreateTask();
+                    break;
+                case "7":
+                    AssignTask();
+                    break;
+                case "8":
+                    RemoveTask();
+                    break;
+                case "9":
                     _activeUser = null;
                     break;
                 default:
-                    _activeUser = null;
+                    Console.WriteLine("Invalid option, try again.");
                     break;
             }
             
         }
     }
 
-    private void ViewAllTasks()
+    private void ViewCurrentTasks()
     {
-        Console.WriteLine("-------All Tasks-------");
-        List<ProjectTask> allTasks = _projectTaskService.GetAllTasks();
-        foreach (ProjectTask task in allTasks)
+        Console.WriteLine("-------Tasks To Do-------");
+        List<ProjectTask> incompleteTasks = _projectTaskService.GetIncomplete();
+        foreach (ProjectTask task in incompleteTasks)
         {
-            Console.WriteLine(task.Title);
+            _taskDisplayer.Display(task);
         }
     }
+
+    private void ViewCompleteTasks()
+    {
+        Console.WriteLine("------Complete Tasks Ready For Review------");
+        List<ProjectTask> completeTasks = _projectTaskService.GetCompleted();
+        foreach (ProjectTask task in completeTasks)
+        {
+            _taskDisplayer.Display(task);
+        }
+    }
+
+    private void ReviewCompletedTask()
+    {
+        Console.Write("Task Id to review: ");
+        int taskId = int.Parse(Console.ReadLine());
+        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+
+        Console.WriteLine("1. Approve Task");
+        Console.WriteLine("2. Request Revision");
+        Console.Write("option: ");
+        string? option = Console.ReadLine();
+
+        if (option == "1")
+        {
+            _taskStatusProcessor.SetStatusStrategy(new ApproveTaskStrategy());
+            
+        }
+        else if (option == "2")
+        {
+            _taskStatusProcessor.SetStatusStrategy(new AssignTaskStrategy());
+            
+        }
+        _taskStatusProcessor.ProcessTaskStatus(task);
+
+        _projectTaskService.UpdateTask(task);
+    }
+    
 
     private void ViewAllUsers()
     {
@@ -190,23 +231,37 @@ public class System
         List<User> allUsers = _userService.GetAllUsers();
         foreach (User user in allUsers)
         {
-            Console.WriteLine(user.FirstName);
+            Console.WriteLine($"(#{user.UserId}) {user.FirstName} {user.LastName} ({user.Role})");
+        }
+    }
+    
+    private void ViewCreatedTasks()
+    {
+        Console.WriteLine("-------All Created Tasks-------");
+        List<ProjectTask> allTasks = _projectTaskService.GetTasksByAssignedBy(_activeUser.UserId);
+        foreach (ProjectTask task in allTasks)
+        {
+            _taskDisplayer.Display(task);
         }
     }
 
+
     private void CreateTask()
     {
-        Console.Write("Title");
+        // todo: users should be able to create a task without a team member assigned
+        Console.Write("Title: ");
         string? title = Console.ReadLine();
-        Console.Write("Description");
+        Console.Write("Description: ");
         string? description = Console.ReadLine();
         Console.Write("Assign To (User Id): ");
         int assignTo = int.Parse(Console.ReadLine());
+        
         Console.Write("Deadline (YYYY-MM-DD): ");
         DateTime deadline = DateTime.Parse(Console.ReadLine());
-        Console.Write("Type: ");
+        Console.WriteLine("Type: ");
         Console.WriteLine("1. Standard");
-        Console.WriteLine("1. Urgent");
+        Console.WriteLine("2. Urgent");
+        Console.Write("option: ");
         string? typeOption = Console.ReadLine();
         string type = null;
         if (typeOption == "1")
@@ -218,15 +273,29 @@ public class System
             type = "Urgent";
         }
         
-        _projectTaskService.CreateTask(title,  description, _activeUser.UserId, assignTo, deadline, type);
+        ProjectTask task = _projectTaskService.CreateTask(title,  description, _activeUser.UserId, assignTo, deadline, type);
+        
+        _taskStatusProcessor.SetStatusStrategy(new AssignTaskStrategy());
+        _taskStatusProcessor.ProcessTaskStatus(task);
     }
 
+    
     private void AssignTask()
     {
+        Console.Write("Task (Task Id): ");
+        int taskId = int.Parse(Console.ReadLine());
         Console.Write("Team Member (User Id): ");
-        int assignTo = int.Parse(Console.ReadLine());
+        int teamMemberId = int.Parse(Console.ReadLine());
         
-        _projectTaskService.GetTaskById(assignTo);
+        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        User teamMember = _userService.GetUserById(teamMemberId);
+        task.AssignedBy = _activeUser.UserId;
+        task.AssignedTo = teamMemberId;
+        _projectTaskService.UpdateTask(task);
+        Console.WriteLine($"Task {task.TaskId} assigned to {teamMember.FirstName}");
+        
+        
+      
         
     }
 
@@ -241,12 +310,79 @@ public class System
     // todo: create and add necessary team member action logic
     private void DisplayTeamMemberMenu()
     {
-        Console.WriteLine("-------Team Member Menu-------");
-        Console.WriteLine("1. View Assigned Tasks");
-        Console.WriteLine("2. Accept Task");
-        Console.WriteLine("3. Mark Task Complete");
-        Console.WriteLine("4. Report/Flag Task");
-        Console.WriteLine("5. Exit");
+        while (_activeUser != null)
+        {
+            Console.WriteLine("-------Team Member Menu-------");
+            Console.WriteLine("1. View Assigned Tasks");
+            Console.WriteLine("2. Accept Task");
+            Console.WriteLine("3. Mark Task Complete");
+            Console.WriteLine("4. Report/Flag Task");
+            Console.WriteLine("5. Exit");
+            Console.Write("option: ");
+            string? option = Console.ReadLine();
+
+            switch (option)
+            {
+                case "1":
+                    ViewAssignedTasks();
+                    break;
+                case "2":
+                    AcceptTask();
+                    break;
+                case "3":
+                    CompleteTask();
+                    break;
+                case "4":
+                    ReportTask();
+                    break;
+                default:
+                    Console.WriteLine("Invalid option, try again.");
+                    break;
+            }
+        }
+    }
+
+    private void ViewAssignedTasks()
+    {
+        List<ProjectTask> assignedTasks = _projectTaskService.GetTasksByAssignedTo(_activeUser.UserId);
+        
+        Console.WriteLine("----------------Your Tasks----------------");
+
+        foreach (ProjectTask task in assignedTasks)
+        {
+            _taskDisplayer.Display(task);
+        }
+    }
+
+    private void AcceptTask()
+    {
+        Console.Write("Task Id: ");
+        int taskId = int.Parse(Console.ReadLine());
+        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        _taskStatusProcessor.SetStatusStrategy(new AcceptTaskStrategy());
+        _taskStatusProcessor.ProcessTaskStatus(task);
+        _projectTaskService.UpdateTask(task);
+
+    }
+
+    private void CompleteTask()
+    {
+        Console.Write("Task Id: ");
+        int taskId = int.Parse(Console.ReadLine());
+        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        _taskStatusProcessor.SetStatusStrategy(new CompleteTaskStrategy());
+        _taskStatusProcessor.ProcessTaskStatus(task);
+        _projectTaskService.UpdateTask(task);
+    }
+
+    private void ReportTask()
+    {
+        Console.Write("Task Id: ");
+        int taskId = int.Parse(Console.ReadLine());
+        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        _taskStatusProcessor.SetStatusStrategy(new RequestRevisionStrategy());
+        _taskStatusProcessor.ProcessTaskStatus(task);
+        _projectTaskService.UpdateTask(task);
     }
     
 }
