@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using ProjectManagementSystem.Enums;
 using ProjectManagementSystem.Factory;
 using ProjectManagementSystem.Repositories;
 using ProjectManagementSystem.Models;
@@ -30,10 +31,36 @@ public class ProjectTaskService : IProjectTaskService
     {
         return _projectTaskRepository.GetById(id);
     }
+    
 
-    public List<ProjectTask> GetAllTasks()
+    public List<ProjectTask> GetIncomplete()
     {
-        return _projectTaskRepository.GetAll();
+        List<ProjectTask> allTasks = _projectTaskRepository.GetAll();
+        
+        List<ProjectTask> incompleteTasks = new List<ProjectTask>();
+        foreach (ProjectTask task in allTasks)
+        {
+            if (task.Status != ProjectTaskStatus.Complete)
+            {
+                incompleteTasks.Add(task);
+            }
+        }
+        return incompleteTasks;
+        
+    }
+
+    public List<ProjectTask> GetCompleted()
+    {
+        List<ProjectTask> completeTasks = new List<ProjectTask>();
+        foreach (ProjectTask task in _projectTaskRepository.GetAll())
+        {
+            if (task.Status == ProjectTaskStatus.Complete)
+            {
+                completeTasks.Add(task);
+            }
+        }
+        return completeTasks;
+        
     }
 
     public List<ProjectTask> GetTasksByAssignedTo(int userId)
@@ -49,4 +76,11 @@ public class ProjectTaskService : IProjectTaskService
     {
         _projectTaskRepository.Delete(id);
     }
+
+    public void UpdateTask(ProjectTask task)
+    {
+        _projectTaskRepository.Update(task);
+    }
+
+  
 }
