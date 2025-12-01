@@ -277,6 +277,7 @@ public class System
         
         _taskStatusProcessor.SetStatusStrategy(new AssignTaskStrategy());
         _taskStatusProcessor.ProcessTaskStatus(task);
+        _projectTaskService.UpdateTask(task);
     }
 
     
@@ -334,6 +335,9 @@ public class System
                     break;
                 case "4":
                     ReportTask();
+                    break;
+                case "5":
+                    _activeUser = null;
                     break;
                 default:
                     Console.WriteLine("Invalid option, try again.");
