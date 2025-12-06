@@ -10,10 +10,10 @@ public abstract class ProjectTask
     public int AssignedBy { get; set; } // UserId
     public int AssignedTo { get; set; } // UserId
     public ProjectTaskStatus Status { get; set; }
-    public DateTime Deadline { get; set; }
+    public Deadline Deadline { get; set; }
     public string TaskType { get; set; }
 
-    public ProjectTask(string title, string description, int assignedBy, int assignedTo, DateTime deadline,
+    public ProjectTask(string title, string description, int assignedBy, int assignedTo, Deadline deadline,
         string taskType)
     {
         Title = title;

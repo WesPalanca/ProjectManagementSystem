@@ -30,7 +30,7 @@ public void Add(ProjectTask projectTask)
         cmd.Parameters.AddWithValue("@assignedBy", projectTask.AssignedBy);
         cmd.Parameters.AddWithValue("@assignedTo", projectTask.AssignedTo);
         cmd.Parameters.AddWithValue("@status", projectTask.Status.ToString());
-        cmd.Parameters.AddWithValue("@deadline", projectTask.Deadline);
+        cmd.Parameters.AddWithValue("@deadline", projectTask.Deadline.DueDate);
         cmd.Parameters.AddWithValue("@taskType", projectTask.TaskType);
 
         cmd.ExecuteNonQuery();
@@ -44,11 +44,12 @@ public void Add(ProjectTask projectTask)
         cmd.Parameters.AddWithValue("@id", id);
         using MySqlDataReader reader = cmd.ExecuteReader();
         if (!reader.Read()) return null;
+        Deadline deadline = new Deadline(reader.GetDateTime("Deadline"));
         ProjectTask task = _projectTaskFactory.CreateTask(reader.GetString("Title"), 
             reader.GetString("Description"),
             reader.GetInt32("AssignedBy"),
             reader.GetInt32("AssignedTo"),
-            reader.GetDateTime("Deadline"),
+            deadline,
             reader.GetString("TaskType"));
         task.TaskId = reader.GetInt32("TaskId");
         task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
@@ -63,13 +64,15 @@ public void Add(ProjectTask projectTask)
         string query = "SELECT * FROM Tasks";
         using MySqlCommand cmd = new MySqlCommand(query, _connection);
         using MySqlDataReader reader = cmd.ExecuteReader();
+        
         while (reader.Read())
         {
+            Deadline deadline = new Deadline(reader.GetDateTime("Deadline"));
             ProjectTask task = _projectTaskFactory.CreateTask(reader.GetString("Title"), 
                 reader.GetString("Description"),
                 reader.GetInt32("AssignedBy"),
                 reader.GetInt32("AssignedTo"),
-                reader.GetDateTime("Deadline"),
+                deadline,
                 reader.GetString("TaskType"));
             task.TaskId = reader.GetInt32("TaskId");
             task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
@@ -86,13 +89,15 @@ public void Add(ProjectTask projectTask)
         using MySqlCommand cmd = new MySqlCommand(query, _connection);
         cmd.Parameters.AddWithValue("@userId", userId);
         using MySqlDataReader reader = cmd.ExecuteReader();
+  
         while (reader.Read())
         {
+            Deadline deadline = new Deadline(reader.GetDateTime("Deadline"));
             ProjectTask task = _projectTaskFactory.CreateTask(reader.GetString("Title"), 
                 reader.GetString("Description"),
                 reader.GetInt32("AssignedBy"),
                 reader.GetInt32("AssignedTo"),
-                reader.GetDateTime("Deadline"),
+                deadline,
                 reader.GetString("TaskType"));
             task.TaskId = reader.GetInt32("TaskId");
             task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
@@ -111,13 +116,15 @@ public void Add(ProjectTask projectTask)
         using MySqlCommand cmd = new MySqlCommand(query, _connection);
         cmd.Parameters.AddWithValue("@userId", userId);
         using MySqlDataReader reader = cmd.ExecuteReader();
+
         while (reader.Read())
         {
+            Deadline deadline = new Deadline(reader.GetDateTime("Deadline"));
             ProjectTask task = _projectTaskFactory.CreateTask(reader.GetString("Title"), 
                 reader.GetString("Description"),
                 reader.GetInt32("AssignedBy"),
                 reader.GetInt32("AssignedTo"),
-                reader.GetDateTime("Deadline"),
+                deadline,
                 reader.GetString("TaskType"));
             task.TaskId = reader.GetInt32("TaskId");
             task.Status = Enum.Parse<ProjectTaskStatus>(reader.GetString("Status"));
@@ -146,7 +153,7 @@ public void Add(ProjectTask projectTask)
         cmd.Parameters.AddWithValue("@assignedBy", task.AssignedBy);
         cmd.Parameters.AddWithValue("@assignedTo", task.AssignedTo);
         cmd.Parameters.AddWithValue("@status", task.Status.ToString());
-        cmd.Parameters.AddWithValue("@deadline", task.Deadline);
+        cmd.Parameters.AddWithValue("@deadline", task.Deadline.DueDate);
         cmd.Parameters.AddWithValue("@taskType", task.TaskType);
         cmd.Parameters.AddWithValue("@TaskId", task.TaskId);
 

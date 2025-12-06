@@ -13,7 +13,7 @@ public class StandardDisplayStrategy : ITaskDisplayStrategy
         string assignedToName = assignedTo.FirstName + " " + assignedTo.LastName;
         Console.WriteLine($"[STANDARD] {task.Title} (ID: {task.TaskId})");
         Console.WriteLine($"Assigned By: (#{task.AssignedBy}) {assignedByName}, Assigned To: (#{task.AssignedTo}) {assignedToName}");
-        Console.WriteLine($"Deadline: {task.Deadline:yyyy-M-d dddd}, Status: {task.Status}");
+        Console.WriteLine($"Deadline: {task.Deadline}, Status: {task.Status}");
         Console.WriteLine("------------------------------------------------------");
     }
 }

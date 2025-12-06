@@ -2,7 +2,7 @@
 using ProjectManagementSystem.Models;
 public class ProjectTaskFactory : IProjectTaskFactory
 {
-    public ProjectTask? CreateTask(string title, string description, int assignedBy, int assignedTo, DateTime deadline,
+    public ProjectTask? CreateTask(string title, string description, int assignedBy, int assignedTo, Deadline deadline,
         string taskType)
     {
         switch (taskType)

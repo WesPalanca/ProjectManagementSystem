@@ -7,9 +7,9 @@ public class StandardProjectTask : ProjectTask
         string description, 
         int assignedBy, 
         int assignedTo, 
-        DateTime deadline
+        Deadline deadline
     ) : base(title, description, assignedBy, assignedTo, deadline, "Standard")
     {
-        // SummaryStrategy = new StandardSummaryStrategy();
+
     }
 }

@@ -25,7 +25,6 @@ public class System
         Console.WriteLine("Welcome to the Project Management System!");
         Console.WriteLine("1. Log In");
         Console.WriteLine("2. Register");
-        Console.WriteLine("3. Exit");
         string option = Console.ReadLine();
 
         User user = null;
@@ -37,12 +36,6 @@ public class System
                 break;
             case "2":
                 user = _authenticationController.Register();
-                break;
-            case "3":
-                Console.WriteLine("See you next time!");
-                break;
-            default:
-                Console.WriteLine("Invalid option");
                 break;
                 
         }

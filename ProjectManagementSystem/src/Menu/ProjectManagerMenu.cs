@@ -171,7 +171,7 @@ public class ProjectManagerMenu : IMenu
         int assignTo = int.Parse(Console.ReadLine());
         
         Console.Write("Deadline (YYYY-MM-DD): ");
-        DateTime deadline = DateTime.Parse(Console.ReadLine());
+        Deadline deadline = new Deadline(DateTime.Parse(Console.ReadLine()));
         Console.WriteLine("Type: ");
         Console.WriteLine("1. Standard");
         Console.WriteLine("2. Urgent");
