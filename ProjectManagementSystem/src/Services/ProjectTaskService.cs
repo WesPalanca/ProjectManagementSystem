@@ -26,10 +26,16 @@ public class ProjectTaskService : IProjectTaskService
         return createdProjectTask;
     }
     
+    
 
     public ProjectTask? GetTaskById(int id)
     {
         return _projectTaskRepository.GetById(id);
+    }
+
+    public List<ProjectTask> GetAllTasks()
+    {
+        return _projectTaskRepository.GetAll();
     }
     
 
