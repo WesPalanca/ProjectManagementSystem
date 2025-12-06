@@ -1,14 +1,13 @@
-﻿namespace ProjectManagementSystem;
-using ProjectManagementSystem.Models;
+﻿    namespace ProjectManagementSystem;
+    using ProjectManagementSystem.Models;
 
-public class TeamMember : User
-{
-    public List<ProjectTask> AssignedTasks { get; set; }
-    
-    public TeamMember(string firstName, string lastName, string email, string password)
-        : base(firstName, lastName, email, password,"TeamMember")
+    public class TeamMember : User
     {
-        AssignedTasks = new List<ProjectTask>();
-    }
+        
+        public TeamMember(string firstName, string lastName, string email, string password)
+            : base(firstName, lastName, email, password,"TeamMember")
+        {
+            Permissions = new List<string> { "AcceptTask" ,"CompleteTask", "ReportTask" };
+        }
 
-}
+    }

@@ -9,6 +9,8 @@ public class User
     public string Email { get; set; }
     public string Password { get; set; } // should only hold hashed value
     public string Role { get; set; }
+    
+    public List<string> Permissions { get; set; }
 
     public User(string firstName, string lastName, string email, string password, string role)
     {
