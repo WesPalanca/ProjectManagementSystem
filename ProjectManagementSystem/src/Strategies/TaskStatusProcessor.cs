@@ -2,7 +2,7 @@
 
 namespace ProjectManagementSystem.Strategies;
 
-public class TaskStatusProcessor
+public class TaskStatusProcessor : ITaskStatusProcessor
 {
     private ITaskStatusStrategy _strategy;
 

@@ -1,18 +1,16 @@
 ﻿using ProjectManagementSystem.Auth;
-using ProjectManagementSystem.Enums;
 using ProjectManagementSystem.Factory;
 using ProjectManagementSystem.Menu;
 using ProjectManagementSystem.Models;
 
-using ProjectManagementSystem.Services;
-using ProjectManagementSystem.Strategies;
+
 
 namespace ProjectManagementSystem;
 
 public class System
 {
-    IAuthenticationController _authenticationController;
-    IMenuFactory _menuFactory;
+    private readonly IAuthenticationController _authenticationController;
+    private readonly IMenuFactory _menuFactory;
     
     public System(IAuthenticationController authenticationController, IMenuFactory menuFactory)
     {

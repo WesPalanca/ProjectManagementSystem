@@ -1,6 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 
-using ProjectManagementSystem.Factory; // may change later because of in memory dictionary
+using ProjectManagementSystem.Factory;
 using ProjectManagementSystem.Enums;
 namespace ProjectManagementSystem.Repositories;
 using ProjectManagementSystem.Models;

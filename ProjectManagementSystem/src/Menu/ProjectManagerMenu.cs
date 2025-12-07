@@ -9,11 +9,11 @@ public class ProjectManagerMenu : IMenu
 {
     private readonly IUserService _userService;
     private readonly IProjectTaskService _projectTaskService;
-    private readonly TaskDisplayer _taskDisplayer;
-    private readonly TaskStatusProcessor _taskStatusProcessor;
+    private readonly ITaskDisplayer _taskDisplayer;
+    private readonly ITaskStatusProcessor _taskStatusProcessor;
 
     public ProjectManagerMenu(IUserService userService, IProjectTaskService projectTaskService,
-        TaskDisplayer taskDisplayer, TaskStatusProcessor taskStatusProcessor)
+        ITaskDisplayer taskDisplayer, ITaskStatusProcessor taskStatusProcessor)
     {
         _userService = userService;
         _projectTaskService = projectTaskService;

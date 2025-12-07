@@ -4,9 +4,10 @@ using ProjectManagementSystem.Strategies;
 
 namespace ProjectManagementSystem;
 
-public class TaskDisplayer
+public class TaskDisplayer : ITaskDisplayer
 {
     private readonly IUserService _userService;
+    private ITaskDisplayStrategy _strategy = null;
 
     public TaskDisplayer(IUserService userService)
     {
@@ -14,17 +15,17 @@ public class TaskDisplayer
     }
     public void Display(ProjectTask task)
     {
-        ITaskDisplayStrategy? strategy = null;
+      
 
         switch (task.TaskType)
         {
             case "Standard":
-                strategy = new StandardDisplayStrategy();
+                _strategy = new StandardDisplayStrategy();
                 break;
             case "Urgent":
-                strategy = new UrgentDisplayStrategy();
+                _strategy = new UrgentDisplayStrategy();
                 break;
         }
-        strategy.Display(task, _userService);
+        _strategy.Display(task, _userService);
     }
 }

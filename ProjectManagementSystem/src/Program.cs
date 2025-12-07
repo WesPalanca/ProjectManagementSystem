@@ -21,8 +21,8 @@ class Program
         IProjectTaskFactory projectTaskFactory = new ProjectTaskFactory();
         IProjectTaskRepository projectTaskRepository = new ProjectTaskRepository(connection, projectTaskFactory);
         IProjectTaskService projectTaskService = new ProjectTaskService(projectTaskFactory, projectTaskRepository);
-        TaskStatusProcessor taskStatusProcessor = new TaskStatusProcessor();
-        TaskDisplayer taskDisplayer = new TaskDisplayer(userService);
+        ITaskStatusProcessor taskStatusProcessor = new TaskStatusProcessor();
+        ITaskDisplayer taskDisplayer = new TaskDisplayer(userService);
         IAuthenticationController authenticationController = new AuthenticationController(userService);
         IMenuFactory menuFactory = new MenuFactory(userService, projectTaskService, taskDisplayer, taskStatusProcessor);
         System sys = new System(authenticationController, menuFactory);
