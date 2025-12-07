@@ -24,6 +24,7 @@ public abstract class ProjectTask
         Deadline = deadline;
         TaskType = taskType;
     }
-  
+
+    public abstract string Info();
 
 }

@@ -1,4 +1,5 @@
-﻿using ProjectManagementSystem.Models;
+﻿using ProjectManagementSystem.Enums;
+using ProjectManagementSystem.Models;
 using ProjectManagementSystem.Services;
 using ProjectManagementSystem.Strategies;
 
@@ -39,13 +40,13 @@ public class TeamMemberMenu : IMenu
                     ViewAssignedTasks(user);
                     break;
                 case "2":
-                    AcceptTask();
+                    AcceptTask(user);
                     break;
                 case "3":
-                    CompleteTask();
+                    CompleteTask(user);
                     break;
                 case "4":
-                    ReportTask();
+                    ReportTask(user);
                     break;
                 case "5":
                     return;
@@ -69,8 +70,13 @@ public class TeamMemberMenu : IMenu
         }
     }
 
-    private void AcceptTask()
+    private void AcceptTask(User user)
     {
+        if (!user.HasPermission(Permissions.AcceptTask))
+        {
+            Console.WriteLine("You don't have permission to accept this task.");
+            return;
+        }
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
@@ -80,8 +86,13 @@ public class TeamMemberMenu : IMenu
 
     }
 
-    private void CompleteTask()
+    private void CompleteTask(User user)
     {
+        if (!user.HasPermission(Permissions.CompleteTask))
+        {
+            Console.WriteLine("You don't have permission to complete this task.");
+            return;
+        }
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
@@ -90,8 +101,13 @@ public class TeamMemberMenu : IMenu
         _projectTaskService.UpdateTask(task);
     }
 
-    private void ReportTask()
+    private void ReportTask(User user)
     {
+        if (!user.HasPermission(Permissions.ReportTask))
+        {
+            Console.WriteLine("You don't have permission to report this task.");
+            return;
+        }
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         ProjectTask task = _projectTaskService.GetTaskById(taskId);

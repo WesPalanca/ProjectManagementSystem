@@ -56,7 +56,7 @@ public class ProjectManagerMenu : IMenu
                     ViewCreatedTasks(user);
                     break;
                 case "5":
-                    ReviewCompletedTask();
+                    ReviewCompletedTask(user);
                     break;
                 case "6":
                     CreateTask(user);
@@ -65,7 +65,7 @@ public class ProjectManagerMenu : IMenu
                     AssignTask(user);
                     break;
                 case "8":
-                    RemoveTask();
+                    RemoveTask(user);
                     break;
                 case "9":
                     ViewUserReportedTasks(user);
@@ -112,7 +112,7 @@ public class ProjectManagerMenu : IMenu
         }
     }
 
-    private void ReviewCompletedTask()
+    private void ReviewCompletedTask(User user)
     {
         Console.Write("Task Id to review: ");
         int taskId = int.Parse(Console.ReadLine());
@@ -125,11 +125,20 @@ public class ProjectManagerMenu : IMenu
 
         if (option == "1")
         {
+            if (!user.HasPermission(Permissions.ApproveTask))
+            {
+                Console.WriteLine("You do not have permission to approve tasks.");
+                return;
+            }
             _taskStatusProcessor.SetStatusStrategy(new ApproveTaskStrategy());
             
         }
         else if (option == "2")
         {
+            if (!user.HasPermission(Permissions.ReportTask))
+            {
+                Console.WriteLine("You do not have permission report.");
+            }
             _taskStatusProcessor.SetStatusStrategy(new AssignTaskStrategy());
             
         }
@@ -162,7 +171,11 @@ public class ProjectManagerMenu : IMenu
 
     private void CreateTask(User user)
     {
-        // todo: users should be able to create a task without a team member assigned
+        if (!user.HasPermission(Permissions.CreateTask))
+        {
+            Console.WriteLine("You do not have permission to create tasks.");
+            return;
+        }
         Console.Write("Title: ");
         string? title = Console.ReadLine();
         Console.Write("Description: ");
@@ -197,6 +210,11 @@ public class ProjectManagerMenu : IMenu
     
     private void AssignTask(User user)
     {
+        if (!user.HasPermission(Permissions.AssignTask))
+        {
+            Console.WriteLine("You do not have permission to assign this task.");
+            return;
+        }
         Console.Write("Task (Task Id): ");
         int taskId = int.Parse(Console.ReadLine());
         Console.Write("Team Member (User Id): ");
@@ -214,8 +232,13 @@ public class ProjectManagerMenu : IMenu
         
     }
 
-    private void RemoveTask()
+    private void RemoveTask(User user)
     {
+        if (!user.HasPermission(Permissions.DeleteTask))
+        {
+            Console.WriteLine("You do not have permission to delete this task.");
+            return;
+        }
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         _projectTaskService.DeleteTask(taskId);

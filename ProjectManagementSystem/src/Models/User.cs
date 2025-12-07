@@ -1,4 +1,6 @@
-﻿namespace ProjectManagementSystem.Models;
+﻿using ProjectManagementSystem.Enums;
+
+namespace ProjectManagementSystem.Models;
 
 public class User
 {
@@ -10,7 +12,7 @@ public class User
     public string Password { get; set; } // should only hold hashed value
     public string Role { get; set; }
     
-    public List<string> Permissions { get; set; }
+    public List<Permissions> UserPermissions { get; set; }
 
     public User(string firstName, string lastName, string email, string password, string role)
     {
@@ -21,8 +23,10 @@ public class User
         Role = role;
     }
 
-    public void DisplayInfo()
+    public bool HasPermission(Permissions permission)
     {
-        Console.WriteLine($"firstName: {FirstName} , lastName: {LastName} , email: {Email} , role: {Role}");
+        return UserPermissions.Contains(permission);
     }
-}
+
+
+    }

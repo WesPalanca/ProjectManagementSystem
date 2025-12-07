@@ -12,4 +12,11 @@ public class StandardProjectTask : ProjectTask
     {
 
     }
+
+    public override string Info()
+    {
+        return $"[STANDARD] {Title} (ID: {TaskId})\nDeadline: {Deadline:yyyy-M-d dddd} | Status: {Status}\nAssigned By ID: (#{AssignedBy}) | Assigned To: (#{AssignedTo})\n";
+    }
+
+ 
 }
