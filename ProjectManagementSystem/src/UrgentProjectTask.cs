@@ -7,8 +7,14 @@ public class UrgentProjectTask : ProjectTask
         string description, 
         int assignedBy, 
         int assignedTo, 
-        DateTime deadline
-    ) : base(title, description, assignedBy, assignedTo, deadline, "Urgent")
+        Deadline deadline
+    ) : base(title, description, assignedBy, assignedTo,  deadline, "Urgent")
     {
     }
+
+    public override string Info()
+    {
+        return $"[URGENT] {Title} (ID: {TaskId})\nDeadline: {Deadline:yyyy-M-d dddd} | Status: {Status}\nAssigned By ID: (#{AssignedBy}) | Assigned To: (#{AssignedTo})\n";
+    }
+
 }

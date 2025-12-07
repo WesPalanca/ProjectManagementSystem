@@ -15,7 +15,7 @@ public class ProjectTaskService : IProjectTaskService
         _projectTaskFactory = projectTaskFactory;
         _projectTaskRepository = projectTaskRepository;
     }
-    public ProjectTask CreateTask(string title, string description, int assignedBy, int assignedTo, DateTime deadline, string taskType)
+    public ProjectTask CreateTask(string title, string description, int assignedBy, int assignedTo, Deadline deadline, string taskType)
     {
         // Only create the ProjectTask object via the factory
         ProjectTask? createdProjectTask =
@@ -26,10 +26,16 @@ public class ProjectTaskService : IProjectTaskService
         return createdProjectTask;
     }
     
+    
 
     public ProjectTask? GetTaskById(int id)
     {
         return _projectTaskRepository.GetById(id);
+    }
+
+    public List<ProjectTask> GetAllTasks()
+    {
+        return _projectTaskRepository.GetAll();
     }
     
 

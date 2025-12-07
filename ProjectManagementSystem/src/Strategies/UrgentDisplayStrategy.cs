@@ -11,9 +11,11 @@ public class UrgentDisplayStrategy : ITaskDisplayStrategy
         User assignedTo = userService.GetUserById(task.AssignedTo);
         string assignedByName = assignedBy.FirstName + " " + assignedBy.LastName;
         string assignedToName = assignedTo.FirstName + " " + assignedTo.LastName;
-        Console.WriteLine($"[URGENT] {task.Title} (ID: {task.TaskId})");
-        Console.WriteLine($"Assigned By: (#{task.AssignedBy}) {assignedByName}, Assigned To: (#{task.AssignedTo}) {assignedToName}");
-        Console.WriteLine($"Deadline: {task.Deadline:yyyy-M-d dddd}, Status: {task.Status}");
+        string taskInfo = task.Info();
+        taskInfo += $"{assignedByName} ---> {assignedToName}";
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(taskInfo);
+        Console.ResetColor();
         Console.WriteLine("------------------------------------------------------");
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using ProjectManagementSystem.Services;
 using DotNetEnv;
+using ProjectManagementSystem.Auth;
 using ProjectManagementSystem.Factory;
 using ProjectManagementSystem.Repositories;
 using ProjectManagementSystem.Strategies;
@@ -20,9 +21,11 @@ class Program
         IProjectTaskFactory projectTaskFactory = new ProjectTaskFactory();
         IProjectTaskRepository projectTaskRepository = new ProjectTaskRepository(connection, projectTaskFactory);
         IProjectTaskService projectTaskService = new ProjectTaskService(projectTaskFactory, projectTaskRepository);
-        TaskStatusProcessor taskStatusProcessor = new TaskStatusProcessor();
-        TaskDisplayer taskDisplayer = new TaskDisplayer(userService);
-        System sys = new System(userService, projectTaskService, taskStatusProcessor, taskDisplayer);
+        ITaskStatusProcessor taskStatusProcessor = new TaskStatusProcessor();
+        ITaskDisplayer taskDisplayer = new TaskDisplayer(userService);
+        IAuthenticationController authenticationController = new AuthenticationController(userService);
+        IMenuFactory menuFactory = new MenuFactory(userService, projectTaskService, taskDisplayer, taskStatusProcessor);
+        System sys = new System(authenticationController, menuFactory);
         sys.Run();
        
         

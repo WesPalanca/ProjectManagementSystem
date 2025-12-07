@@ -7,9 +7,16 @@ public class StandardProjectTask : ProjectTask
         string description, 
         int assignedBy, 
         int assignedTo, 
-        DateTime deadline
+        Deadline deadline
     ) : base(title, description, assignedBy, assignedTo, deadline, "Standard")
     {
-        // SummaryStrategy = new StandardSummaryStrategy();
+
     }
+
+    public override string Info()
+    {
+        return $"[STANDARD] {Title} (ID: {TaskId})\nDeadline: {Deadline:yyyy-M-d dddd} | Status: {Status}\nAssigned By ID: (#{AssignedBy}) | Assigned To: (#{AssignedTo})\n";
+    }
+
+ 
 }
