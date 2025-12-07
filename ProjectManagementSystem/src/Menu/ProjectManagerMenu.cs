@@ -31,7 +31,7 @@ public class ProjectManagerMenu : IMenu
             Console.WriteLine("1. View Current Tasks");
             Console.WriteLine("2. View Completed Tasks");
             Console.WriteLine("3. View All Users");
-            Console.WriteLine("4. View Created Tasks");
+            Console.WriteLine("4. View Tasks you Assigned");
             Console.WriteLine("5. Approve/Review Task");
             Console.WriteLine("6. Create Task");
             Console.WriteLine("7. Assign Task");
@@ -53,7 +53,7 @@ public class ProjectManagerMenu : IMenu
                     ViewAllUsers();
                     break;
                 case "4":
-                    ViewCreatedTasks(user);
+                    ViewTasksYouAssigned(user);
                     break;
                 case "5":
                     ReviewCompletedTask(user);
@@ -115,33 +115,61 @@ public class ProjectManagerMenu : IMenu
 
     private void ReviewCompletedTask(User user)
     {
-        Console.Write("Task Id to review: ");
-        int taskId = int.Parse(Console.ReadLine());
+        
+        string input;
+        int taskId;
+        do
+        {
+            Console.Write("Task Id to review: ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Task Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out taskId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
+        
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
-
-        Console.WriteLine("1. Approve Task");
-        Console.WriteLine("2. Request Revision");
-        Console.Write("option: ");
-        string? option = Console.ReadLine();
-
-        if (option == "1")
+        
+        string option;
+        do
         {
-            if (!user.HasPermission(Permissions.ApproveTask))
+            Console.WriteLine("\n1. Approve Task");
+            Console.WriteLine("2. Request Revision");
+            Console.Write("option: ");
+            option = Console.ReadLine();
+            if (option != "1" && option != "2")
             {
-                Console.WriteLine("You do not have permission to approve tasks.");
-                return;
+                Console.WriteLine("Invalid option. Please enter 1 or 2.");
             }
-            _taskStatusProcessor.SetStatusStrategy(new ApproveTaskStrategy());
-            
-        }
-        else if (option == "2")
+        } while (option != "1" && option != "2");
+
+        switch (option)
         {
-            if (!user.HasPermission(Permissions.ReportTask))
-            {
-                Console.WriteLine("You do not have permission report.");
-            }
-            _taskStatusProcessor.SetStatusStrategy(new RequestRevisionStrategy());
-            
+            case "1":
+                if (!user.HasPermission(Permissions.ApproveTask))
+                {
+                    Console.WriteLine("You do not have permission to approve tasks.");
+                    return;
+                }
+                _taskStatusProcessor.SetStatusStrategy(new ApproveTaskStrategy());
+                break;
+            case "2":
+                if (!user.HasPermission(Permissions.ReportTask))
+                {
+                    Console.WriteLine("You do not have permission to report tasks.");
+                    return;
+                }
+                _taskStatusProcessor.SetStatusStrategy(new RequestRevisionStrategy());
+                break;
+            default:
+                Console.WriteLine("Invalid option, try again.");
+                break;
+                
         }
         _taskStatusProcessor.ProcessTaskStatus(task);
 
@@ -159,7 +187,7 @@ public class ProjectManagerMenu : IMenu
         }
     }
     
-    private void ViewCreatedTasks(User user)
+    private void ViewTasksYouAssigned(User user)
     {
         Console.WriteLine("-------All Created Tasks-------");
         List<ProjectTask> allTasks = _projectTaskService.GetTasksByAssignedBy(user.UserId);
@@ -177,28 +205,94 @@ public class ProjectManagerMenu : IMenu
             Console.WriteLine("You do not have permission to create tasks.");
             return;
         }
-        Console.Write("Title: ");
-        string? title = Console.ReadLine();
-        Console.Write("Description: ");
-        string? description = Console.ReadLine();
-        Console.Write("Assign To (User Id): ");
-        int assignTo = int.Parse(Console.ReadLine());
         
-        Console.Write("Deadline (YYYY-MM-DD): ");
-        Deadline deadline = new Deadline(DateTime.Parse(Console.ReadLine()));
-        Console.WriteLine("Type: ");
-        Console.WriteLine("1. Standard");
-        Console.WriteLine("2. Urgent");
-        Console.Write("option: ");
-        string? typeOption = Console.ReadLine();
+        string title;
+        do
+        {
+            Console.Write("Title: ");
+            title = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                Console.WriteLine("Title cannot be empty.");
+            }
+        } while (string.IsNullOrWhiteSpace(title));
+        
+        string description;
+        do
+        {
+            Console.Write("Description: ");
+            description = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                Console.WriteLine("Description cannot be empty.");
+            }
+        } while (string.IsNullOrWhiteSpace(description));
+        
+        
+        int assignTo;
+        string input;
+        do
+        {
+            Console.Write("Assign To (User Id): ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("User Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out assignTo))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out assignTo) || string.IsNullOrWhiteSpace(input));
+        
+        DateTime dueDate;
+
+        do
+        {
+            Console.Write("Deadline (YYYY-MM-DD): ");
+            input = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Deadline cannot be empty.");
+                continue;
+            }
+
+            if (!DateTime.TryParse(input, out dueDate))
+            {
+                Console.WriteLine("Please enter a valid date.");
+            }
+
+        } while (!DateTime.TryParse(input, out dueDate));
+        
+        Deadline deadline = new Deadline(dueDate);
+        
+        
+        
+        
+        string option;
         string type = null;
-        if (typeOption == "1")
+        do
         {
-            type = "Standard";
-        }
-        else if (typeOption == "2")
+            Console.WriteLine("\n1. Standard");
+            Console.WriteLine("2. Urgent");
+            Console.Write("option: ");
+            option = Console.ReadLine();
+            if (option != "1" && option != "2")
+            {
+                Console.WriteLine("Invalid option. Please enter 1 or 2.");
+            }
+        } while (option != "1" && option != "2");
+
+        switch (option)
         {
-            type = "Urgent";
+            case "1":
+                type = "Standard";
+                break;
+            case "2":
+                type = "Urgent";
+                break;
         }
         
         ProjectTask task = _projectTaskService.CreateTask(title,  description, user.UserId, assignTo, deadline, type);
@@ -216,20 +310,43 @@ public class ProjectManagerMenu : IMenu
             Console.WriteLine("You do not have permission to assign this task.");
             return;
         }
-        Console.Write("Task (Task Id): ");
-        int taskId = int.Parse(Console.ReadLine());
-        Console.Write("Team Member (User Id): ");
-        int teamMemberId = int.Parse(Console.ReadLine());
+        string input;
+        int taskId;
+        do
+        {
+            Console.Write("Task Id: ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Task Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out taskId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
+        
+        
+        int userId;
+        do
+        {
+            Console.Write("User Id: ");
+            input = Console.ReadLine();
+            if (!int.TryParse(input, out userId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            }
+            
+        } while (!int.TryParse(input, out userId));
         
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
-        User teamMember = _userService.GetUserById(teamMemberId);
+        User teamMember = _userService.GetUserById(userId);
         task.AssignedBy = user.UserId;
-        task.AssignedTo = teamMemberId;
+        task.AssignedTo = userId;
         _projectTaskService.UpdateTask(task);
         Console.WriteLine($"Task {task.TaskId} assigned to {teamMember.FirstName}");
         
-        
-      
         
     }
 
@@ -240,8 +357,22 @@ public class ProjectManagerMenu : IMenu
             Console.WriteLine("You do not have permission to delete this task.");
             return;
         }
-        Console.Write("Task Id: ");
-        int taskId = int.Parse(Console.ReadLine());
+        string input;
+        int taskId;
+        do
+        {
+            Console.Write("Task Id: ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Task Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out taskId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
         _projectTaskService.DeleteTask(taskId);
     }
     

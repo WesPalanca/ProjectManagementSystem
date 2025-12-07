@@ -78,8 +78,22 @@ public class TeamMemberMenu : IMenu
             Console.WriteLine("You don't have permission to accept this task.");
             return;
         }
-        Console.Write("Task Id: ");
-        int taskId = int.Parse(Console.ReadLine());
+        string input;
+        int taskId;
+        do
+        {
+            Console.Write("Task Id: ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Task Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out taskId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
         if (task.AssignedTo != user.UserId)
         {
@@ -102,8 +116,22 @@ public class TeamMemberMenu : IMenu
             return;
         }
         
-        Console.Write("Task Id: ");
-        int taskId = int.Parse(Console.ReadLine());
+        string input;
+        int taskId;
+        do
+        {
+            Console.Write("Task Id: ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Task Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out taskId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
         if (task.AssignedTo != user.UserId)
         {
@@ -127,8 +155,22 @@ public class TeamMemberMenu : IMenu
             Console.WriteLine("You don't have permission to report this task.");
             return;
         }
-        Console.Write("Task Id: ");
-        int taskId = int.Parse(Console.ReadLine());
+        string input;
+        int taskId;
+        do
+        {
+            Console.Write("Task Id: ");
+            input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Task Id cannot be empty.");
+            }
+            if (!int.TryParse(input, out taskId))
+            {
+                Console.WriteLine("Please enter a valid numeric value.");
+            } 
+            
+        } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
         if (task.AssignedTo != user.UserId)
         {
