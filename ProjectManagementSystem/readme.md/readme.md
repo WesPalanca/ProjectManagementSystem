@@ -82,30 +82,30 @@ INSERT INTO Tasks (Title, Description, AssignedBy, AssignedTo, Status, Deadline,
 - Required Packages:
   - MySql.Data v9.5.0
   - DotNetEnv v3.1.1
-- Create a .env file and enter your connection string:
-  - Ex: DB_CONNECTION_STRING="Server=localhost;Database=ProjectManagementSystemDB;User ID=root;Password={password}"
+- Create a .env file and enter your connection string as such:
+  - DB_CONNECTION_STRING="Server=localhost;Database=ProjectManagementSystemDB;User ID=root;Password={password}"
   - {password} = your mysql connection password from earlier
 
 **Now use Ctrl+f5 or click the arrow button to run the app.**
 - Note: Since you can see the passwords in the database you can log in to different users to test different roles
 ## 3. Required OOP Features
 
-| OOP Feature / Pattern      | File Name                           | Line Numbers | Reasoning / Purpose                                                                                                  |
-|----------------------------|-------------------------------------|--------------|----------------------------------------------------------------------------------------------------------------------|
-| Inheritance Example 1      | /Models/User.cs                     | All          | `ProjectManager` and `TeamMember` inherit from `User` to share common attributes and behavior.                       |
-| Inheritance Example 2      | /Models/ProjectTask.cs              | All          | `UrgentTask` and `StandardTask` inherit from `ProjectTask` to define specialized task types.                         |
-| Interface Implementation 1 | /Repositories/UserRepository.cs     | All          | Implements `IUserRepository` to define repository contract for user CRUD operations.                                 |
+| OOP Feature / Pattern      | File Name                          | Line Numbers | Reasoning / Purpose                                                                                                  |
+|----------------------------|------------------------------------|--------------|----------------------------------------------------------------------------------------------------------------------|
+| Inheritance Example 1      | /Models/User.cs                    | All          | `ProjectManager` and `TeamMember` inherit from `User` to share common attributes and behavior.                       |
+| Inheritance Example 2      | /Models/ProjectTask.cs             | All          | `UrgentTask` and `StandardTask` inherit from `ProjectTask` to define specialized task types.                         |
+| Interface Implementation 1 | /Repositories/UserRepository.cs    | All          | Implements `IUserRepository` to define repository contract for user operations for reading, adding, and deleting.    |
 | Interface Implementation 2 | /Repositories/ProjectTaskService.cs | All          | Implements `IProjectTaskService` to define task management operations.                                               |
-| Interface Implementation 3 | /Services/IUserService.cs           | All          | Defines `IUserService` interface for user-related operations.                                                        |
-| Polymorphism Example 1     | /Factories/ProjectTaskFactory.cs    | All          | `CreateTask` method returns different task subclasses (`StandardTask` or `UrgentTask`) but handled as `ProjectTask`. |
-| Polymorphism Example 2     | /Factories/TaskDisplayer.cs         | All          | Uses `ITaskDisplayStrategy` to display tasks differently based on type.                                              |
-| Struct                     | /Models/Deadline.cs                 | All          | Represents a task’s due date and provides a simple way to check if it’s overdue.                                     |
-| Enum                       | /Enums/ProjectTaskStatus.cs         | All          | Represents task status (`Incomplete`, `Complete`, `InProgress`).                                                     |
-| Singleton                  | /Services/Database.cs               | All          | Ensures only one MySQL database connection exists.                                                                   |
-| Factory Method Example     | /Factories/UserFactory.cs           | All          | Creates users or tasks dynamically based on role/type.                                                               |
-| Strategy Example           | /Strategies/TaskDisplayer.cs        | All          | Handles task display behaviors dynamically without changing core logic.                                              |
-| Data Structure Example     | /Services/ProjectTaskService.cs     | 42–56        | Uses `List<ProjectTask>` to store and be used for filtering out incomplete tasks.                                    |
-| I/O                        | /Menu/TeamMemberMenu.cs             | All          | Console UI with user input/output specifically for Team Members                                                      |
+| Interface Implementation 3 | /Services/UserService.cs           | All          | Implements `IUserService` interface for user-related operations.                                                     |
+| Polymorphism Example 1     | /Factories/ProjectTaskFactory.cs   | All          | `CreateTask` method returns different task subclasses (`StandardTask` or `UrgentTask`) but handled as `ProjectTask`. |
+| Polymorphism Example 2     | /Factories/TaskDisplayer.cs        | All          | Uses `ITaskDisplayStrategy` to display tasks differently based on type.                                              |
+| Struct                     | /Models/Deadline.cs                | All          | Represents a task’s due date and provides a simple way to check if it’s overdue.                                     |
+| Enum                       | /Enums/ProjectTaskStatus.cs        | All          | Represents task status (`Incomplete`, `Complete`, `InProgress`).                                                     |
+| Singleton                  | /Services/Database.cs              | All          | Ensures only one MySQL database connection exists.                                                                   |
+| Factory Method Example     | /Factories/UserFactory.cs          | All          | Creates users or tasks dynamically based on role/type.                                                               |
+| Strategy Example           | /Strategies/TaskDisplayer.cs       | All          | Handles task display behaviors dynamically without changing core logic.                                              |
+| Data Structure Example     | /Services/ProjectTaskService.cs    | 42–56        | Uses `List<ProjectTask>` to store and be used for filtering out incomplete tasks.                                    |
+| I/O                        | /Menu/TeamMemberMenu.cs            | All          | Console UI with user input/output specifically for Team Members                                                      |
 
 
 ## 4. Design Patterns
