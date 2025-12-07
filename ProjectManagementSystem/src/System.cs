@@ -23,8 +23,8 @@ public class System
         Console.WriteLine("Welcome to the Project Management System!");
         Console.WriteLine("1. Log In");
         Console.WriteLine("2. Register");
+        Console.Write("option: ");
         string option = Console.ReadLine();
-
         User user = null;
 
         switch (option)

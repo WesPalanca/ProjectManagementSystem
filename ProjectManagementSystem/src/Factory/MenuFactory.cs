@@ -29,7 +29,7 @@ public class MenuFactory : IMenuFactory
             case "ProjectManager":
                 menu = new ProjectManagerMenu(_userService, _projectTaskService, _taskDisplayer, _taskStatusProcessor);
                 break;
-            case "TeamManager":
+            case "TeamMember":
                 menu = new TeamMemberMenu(_userService, _projectTaskService, _taskDisplayer, _taskStatusProcessor);
                 break;
         }

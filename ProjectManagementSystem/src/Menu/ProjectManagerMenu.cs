@@ -71,6 +71,7 @@ public class ProjectManagerMenu : IMenu
                     ViewUserReportedTasks(user);
                     break;
                 case "10":
+                    Console.WriteLine($"See you next time, {user.FirstName}");
                     return;
                 default:
                     Console.WriteLine("Invalid option, try again.");
@@ -139,7 +140,7 @@ public class ProjectManagerMenu : IMenu
             {
                 Console.WriteLine("You do not have permission report.");
             }
-            _taskStatusProcessor.SetStatusStrategy(new AssignTaskStrategy());
+            _taskStatusProcessor.SetStatusStrategy(new RequestRevisionStrategy());
             
         }
         _taskStatusProcessor.ProcessTaskStatus(task);

@@ -49,6 +49,7 @@ public class TeamMemberMenu : IMenu
                     ReportTask(user);
                     break;
                 case "5":
+                    Console.WriteLine($"See you next time, {user.FirstName}");
                     return;
                 
                 default:
@@ -80,6 +81,13 @@ public class TeamMemberMenu : IMenu
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        if (task.AssignedTo != user.UserId)
+        {
+            Console.WriteLine("Unauthorized access");
+            return;
+        }
+
+       
         _taskStatusProcessor.SetStatusStrategy(new AcceptTaskStrategy());
         _taskStatusProcessor.ProcessTaskStatus(task);
         _projectTaskService.UpdateTask(task);
@@ -93,9 +101,20 @@ public class TeamMemberMenu : IMenu
             Console.WriteLine("You don't have permission to complete this task.");
             return;
         }
+        
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        if (task.AssignedTo != user.UserId)
+        {
+            Console.WriteLine("Unauthorized access");
+            return;
+        }
+        if (task.Status != ProjectTaskStatus.InProgress)
+        {
+            Console.WriteLine("Must first accept task");
+            return;
+        }
         _taskStatusProcessor.SetStatusStrategy(new CompleteTaskStrategy());
         _taskStatusProcessor.ProcessTaskStatus(task);
         _projectTaskService.UpdateTask(task);
@@ -111,6 +130,11 @@ public class TeamMemberMenu : IMenu
         Console.Write("Task Id: ");
         int taskId = int.Parse(Console.ReadLine());
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        if (task.AssignedTo != user.UserId)
+        {
+            Console.WriteLine("Unauthorized access");
+            return;
+        }
         _taskStatusProcessor.SetStatusStrategy(new RequestRevisionStrategy());
         _taskStatusProcessor.ProcessTaskStatus(task);
         _projectTaskService.UpdateTask(task);
