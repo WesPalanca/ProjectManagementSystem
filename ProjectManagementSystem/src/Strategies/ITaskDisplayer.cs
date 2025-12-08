@@ -1,6 +1,6 @@
 ﻿using ProjectManagementSystem.Models;
 
-namespace ProjectManagementSystem;
+namespace ProjectManagementSystem.Strategies;
 
 public interface ITaskDisplayer
 {
