@@ -87,7 +87,12 @@ INSERT INTO Tasks (Title, Description, AssignedBy, AssignedTo, Status, Deadline,
   - {password} = your mysql connection password from earlier
 
 **Now use Ctrl+f5 or click the arrow button to run the app.**
-- Note: Since you can see the passwords in the database you can log in to different users to test different roles
+- Note: Since you can see the passwords in the database you can log in to different users to test different roles or you can just register instead
+- Once you are logged into the system, based on your you will be able to:
+  - Create tasks
+  - Assign tasks
+  - Mark tasks as different statuses
+  - etc.
 ## 3. Required OOP Features
 
 | OOP Feature / Pattern      | File Name                          | Line Numbers | Reasoning / Purpose                                                                                                  |
@@ -100,12 +105,23 @@ INSERT INTO Tasks (Title, Description, AssignedBy, AssignedTo, Status, Deadline,
 | Polymorphism Example 1     | /Factories/ProjectTaskFactory.cs   | All          | `CreateTask` method returns different task subclasses (`StandardTask` or `UrgentTask`) but handled as `ProjectTask`. |
 | Polymorphism Example 2     | /Factories/TaskDisplayer.cs        | All          | Uses `ITaskDisplayStrategy` to display tasks differently based on type.                                              |
 | Struct                     | /Models/Deadline.cs                | All          | Represents a task’s due date and provides a simple way to check if it’s overdue.                                     |
-| Enum                       | /Enums/ProjectTaskStatus.cs        | All          | Represents task status (`Incomplete`, `Complete`, `InProgress`).                                                     |
+| Enum                       | /Enums/ProjectTaskStatus.cs        | All          | Represents task status (`Unassigned`, `Assigned`, `InProgress`, `Complete`, `Reported`, `Approved`).                             |
 | Singleton                  | /Services/Database.cs              | All          | Ensures only one MySQL database connection exists.                                                                   |
 | Factory Method Example     | /Factories/UserFactory.cs          | All          | Creates users or tasks dynamically based on role/type.                                                               |
 | Strategy Example           | /Strategies/TaskDisplayer.cs       | All          | Handles task display behaviors dynamically without changing core logic.                                              |
 | Data Structure Example     | /Services/ProjectTaskService.cs    | 42–56        | Uses `List<ProjectTask>` to store and be used for filtering out incomplete tasks.                                    |
 | I/O                        | /Menu/TeamMemberMenu.cs            | All          | Console UI with user input/output specifically for Team Members                                                      |
+
+**Access Modifiers Explanation** 
+
+| Access Modifier         | Explanation                                                                                                          | Example                                                                                                                                                                                             |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Private Method          | Some key classes have private methods that are used for internal logic that other classes should not have access to. | `/Menu/TeamMemberMenu.cs` has several private methods that act as helpers to keep code clean and do operations such as marking a task.                                                              |
+| Private Field           | Dependencies that are injected into the class                                                                        | `/Services/UserService.cs` Has two private fields, IUserFactory _userFactory and IUserRepository _userRepository. On creation these two will be injected into the class and will not work otherwise |
+| Public Method and Field | Used so that other classes can access it.                                                                            | `/Repository/UserRepository.cs` has several public methods like Add() which lets UserService and other classes interact with the repository.                                                     |
+
+
+
 
 
 ## 4. Design Patterns
@@ -136,6 +152,6 @@ INSERT INTO Tasks (Title, Description, AssignedBy, AssignedTo, Status, Deadline,
 
 **Key Abstractions & Tradeoffs**:
 
-- Interfaces (like IProjectTaskRepository and ITaskDisplayer) allow for decoupling.
+- Interfaces (like IProjectTaskRepository and ITaskDisplayer) allow for decoupling. 
 
 - Console-based UI chosen for simplicity; future extension could include web or GUI frontend.
