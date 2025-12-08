@@ -95,6 +95,11 @@ public class TeamMemberMenu : IMenu
             
         } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
         ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        if (task == null)
+        {
+            Console.WriteLine("Task not found");
+            return;
+        }
         if (task.AssignedTo != user.UserId)
         {
             Console.WriteLine("Unauthorized access");
@@ -132,7 +137,12 @@ public class TeamMemberMenu : IMenu
             } 
             
         } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
-        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        ProjectTask? task = _projectTaskService.GetTaskById(taskId);
+        if (task == null)
+        {
+            Console.WriteLine("Task not found");
+            return;
+        }
         if (task.AssignedTo != user.UserId)
         {
             Console.WriteLine("Unauthorized access");
@@ -171,7 +181,12 @@ public class TeamMemberMenu : IMenu
             } 
             
         } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
-        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        ProjectTask? task = _projectTaskService.GetTaskById(taskId);
+        if (task == null)
+        {
+            Console.WriteLine("Task not found");
+            return;
+        }
         if (task.AssignedTo != user.UserId)
         {
             Console.WriteLine("Unauthorized access");
