@@ -1,5 +1,8 @@
 # Project Management System
 
+**Folder Structure Note**
+Due to IDE project requirements (JetBrains Rider), the project uses an additional top-level folder (ProjectManagementSystem) that contains all IDE/project configuration files. The required folder structure (/src, /uml, /docs, readme.md) exists inside this folder. To build and run the project, please follow the build/run instructions in this readme.
+
 ## 1. Project Overview
 
 **Short Description:**  
