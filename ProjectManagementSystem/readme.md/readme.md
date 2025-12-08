@@ -82,7 +82,8 @@ INSERT INTO Tasks (Title, Description, AssignedBy, AssignedTo, Status, Deadline,
 - Required Packages:
   - MySql.Data v9.5.0
   - DotNetEnv v3.1.1
-- Create a .env file and enter your connection string as such:
+- Create a .env file in the project root folder (next to the src folder and other directories).
+- Enter your connection string as such:
   - DB_CONNECTION_STRING="Server=localhost;Database=ProjectManagementSystemDB;User ID=root;Password={password}"
   - {password} = your mysql connection password from earlier
 

@@ -133,7 +133,12 @@ public class ProjectManagerMenu : IMenu
             
         } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
         
-        ProjectTask task = _projectTaskService.GetTaskById(taskId);
+        ProjectTask? task = _projectTaskService.GetTaskById(taskId);
+        if (task == null)
+        {
+            Console.WriteLine("Task not found.");
+            return;
+        }
         
         string option;
         do
@@ -340,8 +345,18 @@ public class ProjectManagerMenu : IMenu
             
         } while (!int.TryParse(input, out userId));
         
-        ProjectTask task = _projectTaskService.GetTaskById(taskId);
-        User teamMember = _userService.GetUserById(userId);
+        ProjectTask? task = _projectTaskService.GetTaskById(taskId);
+        if (task == null)
+        {
+            Console.WriteLine("Task not found");
+            return;
+        }
+        User? teamMember = _userService.GetUserById(userId);
+        if (teamMember == null)
+        {
+            Console.WriteLine("User not found.");
+            return;
+        }
         task.AssignedBy = user.UserId;
         task.AssignedTo = userId;
         _projectTaskService.UpdateTask(task);
@@ -373,6 +388,12 @@ public class ProjectManagerMenu : IMenu
             } 
             
         } while (!int.TryParse(input, out taskId) || string.IsNullOrWhiteSpace(input));
+
+        if (_projectTaskService.GetTaskById(taskId) == null)
+        {
+            Console.WriteLine("Task not found");
+            return;
+        }
         _projectTaskService.DeleteTask(taskId);
     }
     
