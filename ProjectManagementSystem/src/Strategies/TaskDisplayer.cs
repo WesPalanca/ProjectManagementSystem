@@ -2,7 +2,7 @@
 using ProjectManagementSystem.Services;
 using ProjectManagementSystem.Strategies;
 
-namespace ProjectManagementSystem;
+namespace ProjectManagementSystem.Strategies;
 
 public class TaskDisplayer : ITaskDisplayer
 {
